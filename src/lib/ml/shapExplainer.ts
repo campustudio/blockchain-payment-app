@@ -24,7 +24,7 @@ export class SHAPExplainer {
   /**
    * 生成完整的风险解释
    *
-   * @param features - 交易的特征向量
+   * @param features - 交易的Feature Vector
    * @param fraudProbability - 模型预测的欺诈概率
    * @returns 可解释的风险分析
    */
@@ -257,7 +257,7 @@ export class SHAPExplainer {
   }
 
   /**
-   * 生成可视化数据（用于前端展示）
+   * 生成Visualization Data（用于前端展示）
    */
   generateVisualizationData(
     shapValues: Record<string, number>

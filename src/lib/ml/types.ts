@@ -31,7 +31,7 @@ export interface FeatureVector {
   merchant_fraud_rate_30d: number;
   merchant_avg_amount: number;
 
-  // 支付方式风险
+  // Payment Method风险
   payment_method_risk_score: number;
   is_crypto: number;
   is_first_transaction: number;
