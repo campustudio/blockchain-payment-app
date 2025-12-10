@@ -1,7 +1,7 @@
 /**
- * ML 模块统一导出
+ * ML Module Unified Exports
  *
- * Corgi Labs 完整 ML Pipeline:
+ * Corgi Labs Complete ML Pipeline:
  * - Feature Engineering
  * - Model Training & Inference
  * - SHAP Explainability
@@ -16,5 +16,5 @@ export * from "./shapExplainer";
 export * from "./falseDeclineOptimizer";
 export * from "./mlService";
 
-// 便捷导出
+// Convenient default export
 export { mlService as default } from "./mlService";

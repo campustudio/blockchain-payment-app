@@ -1,8 +1,8 @@
 /**
- * ML 服务统一接口
- * 整合所有 ML 组件，提供简单的 API
+ * ML Service Unified Interface
+ * Integrates all ML components, providing a simple API
  *
- * 这是 Corgi Labs 的完整 ML Pipeline
+ * This is Corgi Labs' complete ML Pipeline
  */
 
 import { Transaction } from "@/types";
@@ -13,14 +13,14 @@ import { globalSHAPExplainer } from "./shapExplainer";
 import { globalOptimizer, OptimizationResult } from "./falseDeclineOptimizer";
 
 /**
- * ML 服务类
+ * ML Service Class
  *
- * 职责：
- * 1. 特征工程
- * 2. 模型推理
- * 3. SHAP 解释
- * 4. False Decline 优化
- * 5. 模型监控
+ * Responsibilities:
+ * 1. Feature Engineering
+ * 2. Model Inference
+ * 3. SHAP Explanation
+ * 4. False Decline Optimization
+ * 5. Model Monitoring
  */
 export class MLService {
   private model: FraudDetectionModel;
@@ -31,35 +31,35 @@ export class MLService {
   }
 
   /**
-   * 核心 API：实时风险评估
+   * Core API: Real-time Risk Assessment
    *
-   * 这是生产环境中的主要接口
-   * 延迟目标：< 100ms
+   * This is the main interface in production environment
+   * Latency target: < 100ms
    */
   async assessRisk(transaction: Transaction): Promise<{
     prediction: ModelPrediction;
     optimization: OptimizationResult;
   }> {
-    // 1. 特征提取（20ms）
+    // 1. Feature extraction (20ms)
     const features = FeatureEngineer.extractFeatures(transaction);
 
-    // 2. 模型推理（30ms）
+    // 2. Model inference (30ms)
     const prediction = this.model.predict(transaction);
 
-    // 3. SHAP 解释（20ms）
+    // 3. SHAP explanation (20ms)
     const explanation = globalSHAPExplainer.explain(
       features,
       prediction.fraudProbability
     );
     prediction.explanation = explanation;
 
-    // 4. False Decline 优化（10ms）
+    // 4. False Decline optimization (10ms)
     const optimization = globalOptimizer.optimize(transaction, prediction);
 
-    // 5. 记录预测（用于后续训练）
+    // 5. Log prediction (for subsequent training)
     this.logPrediction(prediction);
 
-    // 6. 更新用户历史
+    // 6. Update user history
     FeatureEngineer.updateUserHistory(transaction);
 
     return {
@@ -69,7 +69,7 @@ export class MLService {
   }
 
   /**
-   * 批量评估（用于批处理和分析）
+   * Batch assessment (for batch processing and analysis)
    */
   async batchAssessRisk(transactions: Transaction[]): Promise<{
     predictions: ModelPrediction[];
@@ -88,40 +88,40 @@ export class MLService {
   }
 
   /**
-   * 获取Model Performance指标
+   * Get Model Performance metrics
    */
   getModelMetrics(): ModelMetrics {
     return this.model.getMetrics();
   }
 
   /**
-   * 获取Feature Importance
+   * Get Feature Importance
    */
   getFeatureImportance(): Record<string, number> {
     return this.model.getFeatureImportance();
   }
 
   /**
-   * 获取预测历史（用于监控）
+   * Get prediction history (for monitoring)
    */
   getPredictionHistory(limit: number = 100): ModelPrediction[] {
     return this.predictionHistory.slice(-limit);
   }
 
   /**
-   * 记录预测结果
+   * Log prediction result
    */
   private logPrediction(prediction: ModelPrediction): void {
     this.predictionHistory.push(prediction);
 
-    // 只保留最近1000条
+    // Keep only the most recent 1000 entries
     if (this.predictionHistory.length > 1000) {
       this.predictionHistory.shift();
     }
   }
 
   /**
-   * 模型 A/B 测试
+   * Model A/B Testing
    */
   async abTest(
     transaction: Transaction,
@@ -138,7 +138,7 @@ export class MLService {
     const predictionA = modelAInstance.predict(transaction);
     const predictionB = modelBInstance.predict(transaction);
 
-    // 比较两个模型
+    // Compare two models
     const recommendation = this.compareModels(predictionA, predictionB);
 
     return {
@@ -149,7 +149,7 @@ export class MLService {
   }
 
   /**
-   * 比较两个模型的预测
+   * Compare predictions from two models
    */
   private compareModels(
     predA: ModelPrediction,
@@ -173,7 +173,7 @@ export class MLService {
   }
 
   /**
-   * 获取Real-time Statistics
+   * Get Real-time Statistics
    */
   getRealTimeStats(): {
     totalPredictions: number;
@@ -213,19 +213,19 @@ export class MLService {
 }
 
 /**
- * 全局 ML 服务实例
+ * Global ML service instance
  */
 export const mlService = new MLService();
 
 /**
- * 便捷方法：直接评估交易风险
+ * Convenience method: Directly assess transaction risk
  */
 export async function assessTransactionRisk(transaction: Transaction) {
   return mlService.assessRisk(transaction);
 }
 
 /**
- * 便捷方法：获取模型解释
+ * Convenience method: Get model explanation
  */
 export function explainPrediction(prediction: ModelPrediction) {
   return prediction.explanation;
