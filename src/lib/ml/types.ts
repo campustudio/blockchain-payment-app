@@ -1,5 +1,5 @@
 /**
- * ML Pipeline 类型定义
+ * ML Pipeline Type定义
  * 模拟 Corgi Labs 的机器学习系统
  */
 
@@ -27,7 +27,7 @@ export interface FeatureVector {
   ip_country_match: number;
   billing_shipping_match: number;
 
-  // 商户特征
+  // Merchant特征
   merchant_fraud_rate_30d: number;
   merchant_avg_amount: number;
 

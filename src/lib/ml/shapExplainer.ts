@@ -1,44 +1,44 @@
 /**
- * SHAP (SHapley Additive exPlanations) 可解释性引擎
+ * SHAP (SHapley Additive exPlanations) Explainability Engine
  *
- * SHAP 是当前最先进的模型解释方法
- * 基于博弈论的 Shapley值，为每个特征分配贡献度
+ * SHAP is the state-of-the-art model explanation method
+ * Based on game theory's Shapley values, assigning contribution to each feature
  *
- * 这是 Corgi Labs 的核心卖点：可解释的 AI 决策
+ * This is Corgi Labs' core value proposition: Explainable AI decisions
  */
 
 import { FeatureVector, RiskExplanation, FeatureContribution } from "./types";
 import { FeatureEngineer } from "./featureEngineering";
 
 /**
- * SHAP 解释器
+ * SHAP Explainer
  */
 export class SHAPExplainer {
   private featureImportance: Record<string, number>;
-  private baseValue: number = 0.15; // 基线风险（15%）
+  private baseValue: number = 0.15; // Baseline risk (15%)
 
   constructor() {
     this.featureImportance = FeatureEngineer.getFeatureImportance();
   }
 
   /**
-   * 生成完整的风险解释
+   * Generate complete risk explanation
    *
-   * @param features - 交易的Feature Vector
-   * @param fraudProbability - 模型预测的欺诈概率
-   * @returns 可解释的风险分析
+   * @param features - Transaction's Feature Vector
+   * @param fraudProbability - Model-predicted Fraud Probability
+   * @returns Explainable risk analysis
    */
   explain(features: FeatureVector, fraudProbability: number): RiskExplanation {
-    // 1. 计算每个特征的 SHAP 值
+    // 1. Calculate SHAP values for each feature
     const shapValues = this.calculateSHAPValues(features, fraudProbability);
 
-    // 2. 识别 top 贡献特征
+    // 2. Identify top contributing features
     const topFeatures = this.getTopFeatures(shapValues, 5);
 
-    // 3. 提取风险因素
+    // 3. Extract risk factors
     const riskFactors = this.extractRiskFactors(topFeatures, features);
 
-    // 4. 提取保护因素
+    // 4. Extract protective factors
     const protectiveFactors = this.extractProtectiveFactors(
       topFeatures,
       features
@@ -53,10 +53,10 @@ export class SHAPExplainer {
   }
 
   /**
-   * 计算 SHAP 值
+   * Calculate SHAP values
    *
-   * SHAP 值表示每个特征对最终预测的贡献
-   * 正值 = 增加风险，负值 = 降低风险
+   * SHAP values represent each feature's contribution to the final prediction
+   * Positive value = increases risk, negative value = decreases risk
    */
   private calculateSHAPValues(
     features: FeatureVector,
@@ -64,13 +64,13 @@ export class SHAPExplainer {
   ): Record<string, number> {
     const shapValues: Record<string, number> = {};
 
-    // 实际 SHAP 计算非常复杂，涉及边际贡献计算
-    // 这里用简化版本模拟核心逻辑
+    // Actual SHAP calculation is very complex, involving marginal contribution calculation
+    // Here we use a simplified version to simulate the core logic
 
     for (const [featureName, featureValue] of Object.entries(features)) {
       const importance = this.featureImportance[featureName] || 0.01;
 
-      // SHAP 值 = 特征重要性 × 特征偏离度 × 预测强度
+      // SHAP value = Feature Importance × Feature Deviation × Prediction Strength
       const deviation = this.calculateDeviation(featureName, featureValue);
       const contribution =
         importance * deviation * (prediction - this.baseValue);
@@ -82,10 +82,10 @@ export class SHAPExplainer {
   }
 
   /**
-   * 计算特征偏离正常值的程度
+   * Calculate the degree of feature deviation from normal value
    */
   private calculateDeviation(featureName: string, value: number): number {
-    // 定义"正常"值（中位数或均值）
+    // Define "normal" value (median or mean)
     const normalValues: Record<string, number> = {
       amount_log: 0.4,
       user_age_days: 0.3,
@@ -105,7 +105,7 @@ export class SHAPExplainer {
   }
 
   /**
-   * 获取 top N 贡献特征
+   * Get top N contributing features
    */
   private getTopFeatures(
     shapValues: Record<string, number>,
@@ -123,14 +123,14 @@ export class SHAPExplainer {
       });
     }
 
-    // 按贡献度绝对值排序
+    // Sort by absolute contribution value
     contributions.sort((a, b) => b.importance - a.importance);
 
     return contributions.slice(0, topN);
   }
 
   /**
-   * 提取风险因素（人类可读）
+   * Extract risk factors (human-readable)
    */
   private extractRiskFactors(
     topFeatures: FeatureContribution[],
@@ -153,7 +153,7 @@ export class SHAPExplainer {
   }
 
   /**
-   * 提取保护因素（降低风险的因素）
+   * Extract protective factors (factors that decrease risk)
    */
   private extractProtectiveFactors(
     topFeatures: FeatureContribution[],
@@ -176,7 +176,7 @@ export class SHAPExplainer {
   }
 
   /**
-   * 将特征转换为人类可读的解释
+   * Convert features to human-readable explanations
    */
   private getFeatureExplanation(
     featureName: string,
@@ -257,7 +257,7 @@ export class SHAPExplainer {
   }
 
   /**
-   * 生成Visualization Data（用于前端展示）
+   * Generate Visualization Data (for frontend display)
    */
   generateVisualizationData(
     shapValues: Record<string, number>
@@ -273,7 +273,7 @@ export class SHAPExplainer {
   }
 
   /**
-   * 将技术特征名转换为显示名称
+   * Convert technical feature names to display names
    */
   private getFeatureDisplayName(featureName: string): string {
     const displayNames: Record<string, string> = {
@@ -302,12 +302,12 @@ export class SHAPExplainer {
   }
 
   /**
-   * 生成决策路径（决策树可视化）
+   * Generate decision path (decision tree visualization)
    */
   generateDecisionPath(features: FeatureVector, prediction: number): string[] {
     const path: string[] = [];
 
-    // 模拟决策树的路径
+    // Simulate decision tree path
     if (features.merchant_fraud_rate_30d > 0.1) {
       path.push("High-risk merchant detected ⚠️");
     }
@@ -343,6 +343,6 @@ export class SHAPExplainer {
 }
 
 /**
- * 全局 SHAP 解释器实例
+ * Global SHAP explainer instance
  */
 export const globalSHAPExplainer = new SHAPExplainer();

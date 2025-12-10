@@ -1,8 +1,8 @@
 /**
  * ML System Dashboard
- * 展示 Corgi Labs 完整的 ML 技术栈
+ * Showcases Corgi Labs' complete ML tech stack
  *
- * 这个页面专门用于面试演示
+ * This page is specifically designed for interview demos
  */
 
 import { useState, useEffect } from "react";
@@ -44,12 +44,12 @@ export const MLSystem = () => {
   const metrics = mlService.getModelMetrics();
   const featureImportance = mlService.getFeatureImportance();
 
-  // 分析单笔交易
+  // Analyze single transaction
   const analyzeTransaction = async (txn: Transaction) => {
     setIsAnalyzing(true);
     setSelectedTransaction(txn);
 
-    // 模拟API延迟
+    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const result = await mlService.assessRisk(txn);

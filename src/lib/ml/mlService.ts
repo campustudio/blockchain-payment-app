@@ -88,14 +88,14 @@ export class MLService {
   }
 
   /**
-   * 获取模型性能指标
+   * 获取Model Performance指标
    */
   getModelMetrics(): ModelMetrics {
     return this.model.getMetrics();
   }
 
   /**
-   * 获取特征重要性
+   * 获取Feature Importance
    */
   getFeatureImportance(): Record<string, number> {
     return this.model.getFeatureImportance();
@@ -173,7 +173,7 @@ export class MLService {
   }
 
   /**
-   * 获取实时统计
+   * 获取Real-time Statistics
    */
   getRealTimeStats(): {
     totalPredictions: number;
