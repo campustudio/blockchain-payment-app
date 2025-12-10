@@ -12,7 +12,6 @@ export const WalletButton = () => {
     address,
     isConnected,
     balance,
-    chainId,
     error,
     isConnecting,
     isMetaMaskInstalled,

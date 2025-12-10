@@ -291,7 +291,7 @@ export const Payment = () => {
                   ${fees.fee.toFixed(2)}
                 </span>
               </div>
-              {fees.gasFee > 0 && (
+              {fees.gasFee && fees.gasFee > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Gas Fee (Est.)</span>
                   <span className="font-medium text-gray-900">

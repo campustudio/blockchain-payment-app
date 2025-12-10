@@ -253,7 +253,7 @@ export const MLSystem = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="font-medium text-gray-900">
-                        {txn.merchant} - ${txn.amount.toFixed(2)}
+                        {txn.merchantName} - ${txn.amount.toFixed(2)}
                       </div>
                       <div className="text-xs text-gray-500">
                         {txn.paymentMethod}

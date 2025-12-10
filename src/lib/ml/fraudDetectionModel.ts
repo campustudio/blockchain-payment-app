@@ -310,8 +310,8 @@ export class FraudDetectionModel {
    * 生成风险解释（SHAP values 模拟）
    */
   private explainPrediction(
-    features: FeatureVector,
-    fraudProbability: number
+    _features: FeatureVector,
+    _fraudProbability: number
   ): any {
     // 将在下一个模块中实现详细的 SHAP 解释
     return {

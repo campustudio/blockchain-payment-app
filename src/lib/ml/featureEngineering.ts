@@ -70,7 +70,7 @@ export class FeatureEngineer {
    * 这些特征捕捉用户的历史行为模式
    */
   private static extractUserFeatures(transaction: Transaction) {
-    const userId = transaction.userId || "anonymous";
+    const userId = transaction.customerId || "anonymous";
     const history = this.getUserHistory(userId);
 
     // 用户账户年龄
@@ -103,7 +103,7 @@ export class FeatureEngineer {
    * 检测异常的交易速度和金额变化
    */
   private static extractVelocityFeatures(transaction: Transaction) {
-    const userId = transaction.userId || "anonymous";
+    const userId = transaction.customerId || "anonymous";
     const history = this.getUserHistory(userId);
 
     if (history.length === 0) {
@@ -132,7 +132,7 @@ export class FeatureEngineer {
    * 提取设备和位置特征
    * 检测设备指纹和地理位置异常
    */
-  private static extractDeviceFeatures(transaction: Transaction) {
+  private static extractDeviceFeatures(_transaction: Transaction) {
     // 模拟设备年龄（实际会从设备指纹数据库获取）
     const deviceAge = Math.random() * 365;
 
@@ -155,8 +155,12 @@ export class FeatureEngineer {
   private static extractMerchantFeatures(transaction: Transaction) {
     // 模拟商户历史欺诈率
     // 实际会从商户数据库实时计算
-    const merchantFraudRate = this.getMerchantFraudRate(transaction.merchant);
-    const merchantAvgAmount = this.getMerchantAvgAmount(transaction.merchant);
+    const merchantFraudRate = this.getMerchantFraudRate(
+      transaction.merchantName
+    );
+    const merchantAvgAmount = this.getMerchantAvgAmount(
+      transaction.merchantName
+    );
 
     return {
       merchant_fraud_rate_30d: merchantFraudRate,
@@ -264,7 +268,7 @@ export class FeatureEngineer {
    * 更新用户交易历史（用于增量学习）
    */
   static updateUserHistory(transaction: Transaction): void {
-    const userId = transaction.userId || "anonymous";
+    const userId = transaction.customerId || "anonymous";
 
     if (!userTransactionHistory.has(userId)) {
       userTransactionHistory.set(userId, []);

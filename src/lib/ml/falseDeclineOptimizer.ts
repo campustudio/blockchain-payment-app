@@ -81,7 +81,6 @@ export class FalseDeclineOptimizer {
 
     // 生成推理过程
     const reasoning = this.generateReasoning(
-      transaction,
       prediction,
       expectedValue,
       originalDecision,
@@ -166,7 +165,6 @@ export class FalseDeclineOptimizer {
    * 生成决策推理
    */
   private generateReasoning(
-    transaction: Transaction,
     prediction: ModelPrediction,
     expectedValue: number,
     originalDecision: string,
@@ -322,7 +320,6 @@ export class FalseDeclineOptimizer {
    * 估算优化指标（无真实标签）
    */
   private estimateMetrics(results: OptimizationResult[]): OptimizationMetrics {
-    let changedToApprove = 0;
     let totalPotentialRevenue = 0;
 
     results.forEach((result) => {
@@ -330,7 +327,6 @@ export class FalseDeclineOptimizer {
         result.originalDecision !== "approve" &&
         result.optimizedDecision === "approve"
       ) {
-        changedToApprove++;
         totalPotentialRevenue += result.potentialRevenue;
       }
     });
