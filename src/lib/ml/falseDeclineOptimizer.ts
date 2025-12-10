@@ -1,15 +1,15 @@
 /**
- * False Decline 优化器
+ * False Decline Optimizer
  *
- * 这是 Corgi Labs 的核心价值主张！
+ * This is Corgi Labs' core value proposition!
  *
- * False Decline = 拒绝了合法交易
- * 影响：
- * - 损失收入
- * - 损失客户（客户流失）
- * - 客户体验差
+ * False Decline = Rejecting legitimate transactions
+ * Impact:
+ * - Revenue loss
+ * - Customer loss (churn)
+ * - Poor customer experience
  *
- * 目标：在保持欺诈检测率的同时，最小化 False Decline
+ * Goal: Minimize False Decline while maintaining fraud detection rate
  */
 
 import { Transaction } from "@/types";
@@ -33,12 +33,12 @@ export interface OptimizationMetrics {
 }
 
 /**
- * False Decline 优化器
+ * False Decline Optimizer
  */
 export class FalseDeclineOptimizer {
-  private merchantRiskTolerance: number = 0.5; // 商户的风险容忍度
+  private merchantRiskTolerance: number = 0.5; // Merchant's risk tolerance
   private averageTransactionValue: number = 150;
-  private chargebackCost: number = 25; // 退单成本
+  private chargebackCost: number = 25; // Chargeback cost
 
   constructor(config?: {
     riskTolerance?: number;
@@ -51,9 +51,9 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 优化单笔交易决策
+   * Optimize single transaction decision
    *
-   * 核心算法：Expected Value 优化
+   * Core Algorithm: Expected Value Optimization
    * EV = P(legitimate) × Revenue - P(fraud) × (Revenue + Chargeback Cost)
    */
   optimize(
@@ -64,13 +64,13 @@ export class FalseDeclineOptimizer {
     const falseDeclineRisk = prediction.falseDeclineRisk;
     const fraudProbability = prediction.fraudProbability;
 
-    // 计算期望价值
+    // Calculate expected value
     const expectedValue = this.calculateExpectedValue(
       transaction.amount,
       fraudProbability
     );
 
-    // 根据期望价值和其他因素优化决策
+    // Optimize decision based on expected value and other factors
     const optimizedDecision = this.makeOptimizedDecision(
       originalDecision,
       falseDeclineRisk,
@@ -79,7 +79,7 @@ export class FalseDeclineOptimizer {
       prediction.confidence
     );
 
-    // 生成推理过程
+    // Generate reasoning
     const reasoning = this.generateReasoning(
       prediction,
       expectedValue,
@@ -98,7 +98,7 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 计算期望价值
+   * Calculate expected value
    *
    * EV = P(legitimate) × Revenue - P(fraud) × (Revenue + Cost)
    */
@@ -108,17 +108,17 @@ export class FalseDeclineOptimizer {
   ): number {
     const legitimateProbability = 1 - fraudProbability;
 
-    // 如果是合法交易，获得收入
+    // If legitimate transaction, gain revenue
     const revenueIfLegit = legitimateProbability * amount;
 
-    // 如果是欺诈，损失金额 + 退单成本
+    // If fraud, lose amount + chargeback cost
     const lossIfFraud = fraudProbability * (amount + this.chargebackCost);
 
     return revenueIfLegit - lossIfFraud;
   }
 
   /**
-   * 基于多个因素做出优化决策
+   * Make optimized decision based on multiple factors
    */
   private makeOptimizedDecision(
     originalDecision: "approve" | "review" | "decline",
@@ -127,32 +127,32 @@ export class FalseDeclineOptimizer {
     expectedValue: number,
     confidence: number
   ): "approve" | "review" | "decline" {
-    // 如果原决策是批准，保持不变
+    // If original decision is approve, keep unchanged
     if (originalDecision === "approve") {
       return "approve";
     }
 
-    // 如果原决策是拒绝，考虑是否应该改为审核或批准
+    // If original decision is decline, consider changing to review or approve
     if (originalDecision === "decline") {
-      // 高 False Decline 风险 + 正期望价值 → 改为审核
+      // High False Decline risk + positive expected value → change to review
       if (falseDeclineRisk > 0.6 && expectedValue > 0) {
         return "review";
       }
 
-      // 非常高的 False Decline 风险 + 低欺诈概率 → 批准
+      // Very high False Decline risk + low fraud probability → approve
       if (falseDeclineRisk > 0.8 && fraudProbability < 0.4) {
         return "approve";
       }
     }
 
-    // 如果原决策是审核
+    // If original decision is review
     if (originalDecision === "review") {
-      // 低欺诈风险 + 高置信度 → 批准
+      // Low fraud risk + high confidence → approve
       if (fraudProbability < 0.35 && confidence > 0.8) {
         return "approve";
       }
 
-      // 高欺诈风险 → 拒绝
+      // High fraud risk → decline
       if (fraudProbability > 0.7) {
         return "decline";
       }
@@ -162,7 +162,7 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 生成决策推理
+   * Generate decision reasoning
    */
   private generateReasoning(
     prediction: ModelPrediction,
@@ -172,7 +172,7 @@ export class FalseDeclineOptimizer {
   ): string[] {
     const reasoning: string[] = [];
 
-    // 原始评估
+    // Original assessment
     reasoning.push(
       `Original model decision: ${originalDecision.toUpperCase()}`
     );
@@ -183,7 +183,7 @@ export class FalseDeclineOptimizer {
       `False decline risk: ${(prediction.falseDeclineRisk * 100).toFixed(1)}%`
     );
 
-    // 期望价值分析
+    // Expected value analysis
     if (expectedValue > 0) {
       reasoning.push(
         `✅ Positive expected value: $${expectedValue.toFixed(2)}`
@@ -194,7 +194,7 @@ export class FalseDeclineOptimizer {
       );
     }
 
-    // 决策变更原因
+    // Reason for decision change
     if (originalDecision !== optimizedDecision) {
       if (optimizedDecision === "approve" && originalDecision === "decline") {
         reasoning.push(
@@ -221,7 +221,7 @@ export class FalseDeclineOptimizer {
       );
     }
 
-    // 额外上下文
+    // Additional context
     if (prediction.features.user_age_days > 0.4) {
       reasoning.push(`• Established user account (trust signal)`);
     }
@@ -241,7 +241,7 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 批量优化（用于历史分析）
+   * Batch optimization (for historical analysis)
    */
   batchOptimize(
     transactions: Transaction[],
@@ -251,18 +251,18 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 计算优化后的指标
+   * Calculate optimization metrics
    */
   calculateOptimizationMetrics(
     results: OptimizationResult[],
     actualLabels?: { isFraud: boolean; isFalseDecline: boolean }[]
   ): OptimizationMetrics {
-    // 如果没有真实标签，使用模拟数据
+    // If no actual labels, use simulated data
     if (!actualLabels) {
       return this.estimateMetrics(results);
     }
 
-    // 使用真实标签计算精确指标
+    // Calculate precise metrics using actual labels
     let originalFalseDeclines = 0;
     let optimizedFalseDeclines = 0;
     let revenueRecovered = 0;
@@ -271,17 +271,17 @@ export class FalseDeclineOptimizer {
     results.forEach((result, idx) => {
       const actual = actualLabels[idx];
 
-      // 原始决策导致的 False Decline
+      // False Decline caused by original decision
       if (result.originalDecision === "decline" && !actual.isFraud) {
         originalFalseDeclines++;
       }
 
-      // 优化后的 False Decline
+      // False Decline after optimization
       if (result.optimizedDecision === "decline" && !actual.isFraud) {
         optimizedFalseDeclines++;
       }
 
-      // 恢复的收入（原来拒绝，现在批准，且是合法的）
+      // Recovered revenue (originally declined, now approved, and legitimate)
       if (
         result.originalDecision !== "approve" &&
         result.optimizedDecision === "approve" &&
@@ -290,7 +290,7 @@ export class FalseDeclineOptimizer {
         revenueRecovered += result.potentialRevenue;
       }
 
-      // 新增的欺诈损失（原来拒绝，现在批准，但实际是欺诈）
+      // New fraud losses (originally declined, now approved, but actually fraud)
       if (
         result.originalDecision === "decline" &&
         result.optimizedDecision === "approve" &&
@@ -317,7 +317,7 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 估算优化指标（无真实标签）
+   * Estimate optimization metrics (no actual labels)
    */
   private estimateMetrics(results: OptimizationResult[]): OptimizationMetrics {
     let totalPotentialRevenue = 0;
@@ -331,36 +331,36 @@ export class FalseDeclineOptimizer {
       }
     });
 
-    // 估算：假设 80% 的决策变更是正确的
+    // Estimate: assume 80% of decision changes are correct
     const estimatedRevenueRecovered = totalPotentialRevenue * 0.8;
     const estimatedFraudLosses = totalPotentialRevenue * 0.2;
 
     return {
-      falseDeclineRate: 0.02, // 2%（Corgi Labs 优化后）
-      falseDeclineReduction: 0.03, // 减少了 3%
+      falseDeclineRate: 0.02, // 2% (after Corgi Labs optimization)
+      falseDeclineReduction: 0.03, // reduced by 3%
       revenueRecovered: estimatedRevenueRecovered,
-      fraudRiskIncrease: 0.005, // 增加了 0.5% 欺诈风险
+      fraudRiskIncrease: 0.005, // increased 0.5% fraud risk
       netRevenueBenefit: estimatedRevenueRecovered - estimatedFraudLosses,
     };
   }
 
   /**
-   * 动态阈值优化
+   * Dynamic threshold optimization
    *
-   * 根据商户的历史数据和风险偏好，动态调整决策阈值
+   * Dynamically adjust decision thresholds based on merchant's historical data and risk preferences
    */
   optimizeThresholds(historicalData: {
     predictions: ModelPrediction[];
     outcomes: boolean[];
   }): { approveThreshold: number; declineThreshold: number } {
-    // 目标：最大化净收入
+    // Goal: maximize net revenue
     // Net Revenue = Approved Legitimate Revenue - Approved Fraud Loss
 
     let bestApproveThreshold = 0.3;
     let bestDeclineThreshold = 0.6;
     let maxNetRevenue = -Infinity;
 
-    // 网格搜索最优阈值
+    // Grid search for optimal thresholds
     for (let approveT = 0.2; approveT <= 0.4; approveT += 0.05) {
       for (let declineT = 0.5; declineT <= 0.7; declineT += 0.05) {
         const netRevenue = this.simulateNetRevenue(
@@ -384,7 +384,7 @@ export class FalseDeclineOptimizer {
   }
 
   /**
-   * 模拟不同阈值下的净收入
+   * Simulate net revenue under different thresholds
    */
   private simulateNetRevenue(
     data: { predictions: ModelPrediction[]; outcomes: boolean[] },
@@ -398,21 +398,21 @@ export class FalseDeclineOptimizer {
       const amount = this.averageTransactionValue;
 
       if (pred.adjustedScore < approveThreshold) {
-        // 批准
+        // Approve
         if (isFraud) {
           netRevenue -= amount + this.chargebackCost;
         } else {
           netRevenue += amount;
         }
       } else if (pred.adjustedScore < declineThreshold) {
-        // 审核（假设 70% 最终批准）
+        // Review (assume 70% eventually approved)
         if (isFraud) {
           netRevenue -= (amount + this.chargebackCost) * 0.3;
         } else {
           netRevenue += amount * 0.7;
         }
       }
-      // 拒绝：无收入，无损失
+      // Decline: no revenue, no loss
     });
 
     return netRevenue;
@@ -420,7 +420,7 @@ export class FalseDeclineOptimizer {
 }
 
 /**
- * 全局优化器实例
+ * Global optimizer instance
  */
 export const globalOptimizer = new FalseDeclineOptimizer({
   riskTolerance: 0.5,

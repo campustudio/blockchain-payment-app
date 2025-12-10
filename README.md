@@ -326,23 +326,18 @@ The application uses realistic mock data for demonstration:
 - USDC (USD Coin)
 - DAI (Dai Stablecoin)
 
-## 📝 Interview Talking Points
-
-### For SmartPay Position:
+### Features:
 
 1. **Web3 Integration**: Experience with ethers.js, wallet connections, multi-chain support
 2. **Payment UX**: Clean, Apple Pay-grade checkout interface
 3. **State Management**: Zustand for efficient state handling
 4. **TypeScript**: Strongly typed throughout the application
 5. **Responsive Design**: Mobile-first approach with TailwindCSS
-
-### For Corgi Labs Position:
-
-1. **Risk Analytics**: Real-time risk scoring and visualization
-2. **Data Presentation**: Clear metrics for fraud, false declines, revenue impact
-3. **ML Model Interpretation**: Explainable AI concepts (feature importance)
-4. **Performance Metrics**: Approval rates, fraud rates, revenue protection
-5. **Business Value**: ROI calculation, revenue optimization recommendations
+6. **Risk Analytics**: Real-time risk scoring and visualization
+7. **Data Presentation**: Clear metrics for fraud, false declines, revenue impact
+8. **ML Model Interpretation**: Explainable AI concepts (feature importance)
+9. **Performance Metrics**: Approval rates, fraud rates, revenue protection
+10. **Business Value**: ROI calculation, revenue optimization recommendations
 
 ## 🎯 Demo Scenario
 

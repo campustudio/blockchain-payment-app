@@ -1,42 +1,42 @@
 /**
- * 特征工程引擎
- * 模拟 Corgi Labs 的核心特征提取逻辑
+ * Feature Engineering Engine
+ * Simulates Corgi Labs' core feature extraction logic
  *
- * 这是机器学习系统的关键：好的特征 > 复杂的模型
+ * This is key to ML systems: Good features > Complex models
  */
 
 import { Transaction } from "@/types";
 import { FeatureVector } from "./types";
 
-// 模拟特征缓存（实际会用 Redis）
+// Simulate feature cache (would use Redis in production)
 const featureCache = new Map<string, Map<string, number>>();
 const userTransactionHistory = new Map<string, Transaction[]>();
 
 /**
- * 核心特征工程类
+ * Core Feature Engineering Class
  */
 export class FeatureEngineer {
   /**
-   * 从交易中提取完整特征向量
-   * 这是 Corgi Labs 的核心竞争力
+   * Extract complete feature vector from transaction
+   * This is Corgi Labs' core competency
    */
   static extractFeatures(transaction: Transaction): FeatureVector {
-    // 基础特征
+    // Basic features
     const basicFeatures = this.extractBasicFeatures(transaction);
 
-    // 用户行为特征
+    // User behavior features
     const userFeatures = this.extractUserFeatures(transaction);
 
-    // 速度特征（velocity features）
+    // Velocity features
     const velocityFeatures = this.extractVelocityFeatures(transaction);
 
-    // 设备/位置特征
+    // Device/location features
     const deviceFeatures = this.extractDeviceFeatures(transaction);
 
-    // 商户特征
+    // Merchant features
     const merchantFeatures = this.extractMerchantFeatures(transaction);
 
-    // 支付方式特征
+    // Payment method features
     const paymentFeatures = this.extractPaymentMethodFeatures(transaction);
 
     return {
@@ -50,7 +50,7 @@ export class FeatureEngineer {
   }
 
   /**
-   * 提取基础交易特征
+   * Extract basic transaction features
    */
   private static extractBasicFeatures(transaction: Transaction) {
     const timestamp = new Date(transaction.timestamp);
@@ -58,49 +58,49 @@ export class FeatureEngineer {
 
     return {
       amount,
-      amount_log: Math.log1p(amount), // log变换，处理金额的长尾分布
-      hour_of_day: timestamp.getHours() / 24, // 标准化到 0-1
+      amount_log: Math.log1p(amount), // log transformation for long-tail distribution
+      hour_of_day: timestamp.getHours() / 24, // normalize to 0-1
       day_of_week: timestamp.getDay() / 7,
       is_weekend: [0, 6].includes(timestamp.getDay()) ? 1 : 0,
     };
   }
 
   /**
-   * 提取用户行为特征
-   * 这些特征捕捉用户的历史行为模式
+   * Extract user behavior features
+   * These features capture user's historical behavior patterns
    */
   private static extractUserFeatures(transaction: Transaction) {
     const userId = transaction.customerId || "anonymous";
     const history = this.getUserHistory(userId);
 
-    // 用户账户年龄
+    // User account age
     const userAgedays = this.calculateUserAge(userId);
 
-    // 24小时内交易数
+    // Transaction count in 24 hours
     const txnCount24h = this.countRecentTransactions(history, 24);
 
-    // 7天内交易数
+    // Transaction count in 7 days
     const txnCount7d = this.countRecentTransactions(history, 24 * 7);
 
-    // 30天平均交易金额
+    // Average transaction amount in 30 days
     const avgAmount30d = this.calculateAverageAmount(history, 30);
 
-    // 交易频率（transactions per day）
+    // Transaction frequency (transactions per day)
     const txnFrequency = txnCount7d / 7;
 
     return {
-      user_age_days: userAgedays / 365, // 标准化
+      user_age_days: userAgedays / 365, // normalize
       user_txn_count_24h: Math.min(txnCount24h / 10, 1), // cap at 10
       user_txn_count_7d: Math.min(txnCount7d / 50, 1),
-      user_avg_amount_30d: avgAmount30d / 1000, // 标准化
+      user_avg_amount_30d: avgAmount30d / 1000, // normalize
       user_txn_frequency: Math.min(txnFrequency / 5, 1),
       is_first_transaction: history.length === 0 ? 1 : 0,
     };
   }
 
   /**
-   * 提取速度特征（Velocity Features）
-   * 检测异常的交易速度和金额变化
+   * Extract Velocity Features
+   * Detect abnormal transaction speed and amount changes
    */
   private static extractVelocityFeatures(transaction: Transaction) {
     const userId = transaction.customerId || "anonymous";
@@ -129,15 +129,15 @@ export class FeatureEngineer {
   }
 
   /**
-   * 提取设备和位置特征
-   * 检测设备指纹和地理位置异常
+   * Extract device and location features
+   * Detect device fingerprint and geographic anomalies
    */
   private static extractDeviceFeatures(_transaction: Transaction) {
-    // 模拟设备年龄（实际会从设备指纹数据库获取）
+    // Simulate device age (would be fetched from device fingerprint database)
     const deviceAge = Math.random() * 365;
 
-    // 模拟地理位置匹配
-    // 实际会比较 IP 国家、账单国家、配送国家
+    // Simulate geographic location match
+    // Would compare IP country, billing country, shipping country in production
     const ipCountryMatch = Math.random() > 0.1 ? 1 : 0;
     const billingShippingMatch = Math.random() > 0.05 ? 1 : 0;
 
@@ -149,12 +149,12 @@ export class FeatureEngineer {
   }
 
   /**
-   * 提取商户特征
-   * 不同商户有不同的风险模式
+   * Extract merchant features
+   * Different merchants have different risk patterns
    */
   private static extractMerchantFeatures(transaction: Transaction) {
-    // 模拟商户历史欺诈率
-    // 实际会从商户数据库实时计算
+    // Simulate merchant historical fraud rate
+    // Would be calculated in real-time from merchant database
     const merchantFraudRate = this.getMerchantFraudRate(
       transaction.merchantName
     );
@@ -169,17 +169,17 @@ export class FeatureEngineer {
   }
 
   /**
-   * 提取支付方式特征
+   * Extract payment method features
    */
   private static extractPaymentMethodFeatures(transaction: Transaction) {
     const paymentMethod = transaction.paymentMethod.toLowerCase();
 
-    // 不同支付方式有不同的基础风险
+    // Different payment methods have different base risks
     const riskScores: Record<string, number> = {
-      crypto: 0.6, // 加密货币：较高风险（不可逆）
-      credit_card: 0.3, // 信用卡：中等风险
-      debit_card: 0.25, // 借记卡：略低风险
-      bank_transfer: 0.2, // 银行转账：较低风险
+      crypto: 0.6, // Cryptocurrency: higher risk (irreversible)
+      credit_card: 0.3, // Credit card: medium risk
+      debit_card: 0.25, // Debit card: slightly lower risk
+      bank_transfer: 0.2, // Bank transfer: lower risk
     };
 
     return {
@@ -188,18 +188,18 @@ export class FeatureEngineer {
     };
   }
 
-  // ==================== 辅助方法 ====================
+  // ==================== Helper Methods ====================
 
   private static getUserHistory(userId: string): Transaction[] {
     return userTransactionHistory.get(userId) || [];
   }
 
   private static calculateUserAge(userId: string): number {
-    // 模拟用户账户年龄（实际从用户数据库获取）
+    // Simulate user account age (would be fetched from user database)
     const cached = featureCache.get(userId)?.get("user_age_days");
     if (cached) return cached;
 
-    const age = Math.random() * 365 * 3; // 0-3年
+    const age = Math.random() * 365 * 3; // 0-3 years
     this.cacheFeature(userId, "user_age_days", age);
     return age;
   }
@@ -229,7 +229,7 @@ export class FeatureEngineer {
   }
 
   private static getMerchantFraudRate(merchant: string): number {
-    // 模拟商户欺诈率（实际从数据库实时计算）
+    // Simulate merchant fraud rate (calculated in real-time from database)
     const rates: Record<string, number> = {
       Amazon: 0.02,
       Steam: 0.05,
@@ -265,7 +265,7 @@ export class FeatureEngineer {
   }
 
   /**
-   * 更新用户交易历史（用于增量学习）
+   * Update user transaction history (for incremental learning)
    */
   static updateUserHistory(transaction: Transaction): void {
     const userId = transaction.customerId || "anonymous";
@@ -277,24 +277,24 @@ export class FeatureEngineer {
     const history = userTransactionHistory.get(userId)!;
     history.push(transaction);
 
-    // 只保留最近1000笔交易（内存优化）
+    // Keep only recent 1000 transactions (memory optimization)
     if (history.length > 1000) {
       history.shift();
     }
   }
 
   /**
-   * 批量特征提取（用于模型训练）
+   * Batch feature extraction (for model training)
    */
   static extractBatchFeatures(transactions: Transaction[]): FeatureVector[] {
     return transactions.map((txn) => this.extractFeatures(txn));
   }
 
   /**
-   * 特征重要性分析（用于模型解释）
+   * Feature importance analysis (for model interpretation)
    */
   static getFeatureImportance(): Record<string, number> {
-    // 模拟 XGBoost 的特征重要性
+    // Simulate XGBoost feature importance
     return {
       amount_ratio_vs_avg: 0.15,
       user_txn_count_24h: 0.12,
@@ -314,18 +314,18 @@ export class FeatureEngineer {
 }
 
 /**
- * 特征标准化器
- * 确保所有特征在相同的尺度上
+ * Feature Scaler
+ * Ensure all features are on the same scale
  */
 export class FeatureScaler {
   static normalize(features: FeatureVector): FeatureVector {
-    // 所有特征已经在提取时标准化到 0-1 范围
-    // 这里可以添加额外的标准化逻辑
+    // All features are already normalized to 0-1 range during extraction
+    // Additional normalization logic can be added here
     return features;
   }
 
   static denormalize(features: FeatureVector): FeatureVector {
-    // 反标准化（用于展示）
+    // Denormalize (for display)
     return features;
   }
 }
